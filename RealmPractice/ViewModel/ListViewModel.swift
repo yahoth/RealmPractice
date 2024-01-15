@@ -71,6 +71,10 @@ class ListViewModel {
         }
     }
 
+    func deleteAllItems() {
+        realmManager.deleteAll()
+    }
+
     func reverseGeocodeLocation(_ coordinate: CLLocationCoordinate2D) async throws -> String {
         let geocoder = CLGeocoder()
         let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)

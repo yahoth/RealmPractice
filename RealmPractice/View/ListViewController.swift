@@ -30,14 +30,21 @@ class ListViewController: UIViewController {
     }
 
     func createBarButtonItem() {
-        let image = UIImage(systemName: "play")
-        let item = UIBarButtonItem(image: image, style: .done, target: self, action: #selector(action))
+        let addImage = UIImage(systemName: "play")
+        let addItem = UIBarButtonItem(image: addImage, style: .done, target: self, action: #selector(action))
 
-        navigationItem.rightBarButtonItem = item
+        let resetImage = UIImage(systemName: "trash")
+        let resetItem = UIBarButtonItem(image: resetImage, style: .done, target: self, action: #selector(deleteAllItems))
+
+        navigationItem.rightBarButtonItems = [resetItem, addItem]
     }
 
     @objc func action() {
         vm.addItem()
+    }
+
+    @objc func deleteAllItems() {
+        vm.deleteAllItems()
     }
 
     func setupTableView() {
