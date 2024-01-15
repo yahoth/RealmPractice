@@ -44,7 +44,8 @@ class ListViewController: UIViewController {
     }
 
     @objc func deleteAllItems() {
-        vm.deleteAllItems()
+        vm.deleteObjectsOfTrackingData()
+//        tableView.reloadData()
     }
 
     func setupTableView() {
@@ -80,13 +81,17 @@ extension ListViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ListCell", for: indexPath) as? ListCell else { return UITableViewCell() }
         let item = vm.trackingDatas[indexPath.row]
         cell.configure(item: item)
-        cell.selectionStyle = .none
+        cell.selectionStyle = .default
         return cell
     }
 }
 
 extension ListViewController: UITableViewDelegate {
-
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let item = vm.trackingDatas[indexPath.row]
+        print("item: \(item)")
+        print("hello")
+    }
 }
 
 

@@ -15,7 +15,18 @@ class RealmManager {
     var notificationToken: NotificationToken?
 
     init() {
+        let config = Realm.Configuration(
+            schemaVersion: 1,
+            migrationBlock: { migration, oldSchemaVersion in
+                if (oldSchemaVersion < 1) {
+                    // 마이그레이션 코드를 작성합니다.
+                }
+            })
+
+        Realm.Configuration.defaultConfiguration = config
+
         self.realm = try! Realm()
+
     }
 
     func create(object: Object) {
@@ -35,7 +46,7 @@ class RealmManager {
     //Delete All Objects in a Realm
     func deleteAll() {
         do {
-            try realm.write {
+            try realm.write(withoutNotifying: [notificationToken!]) {
                 realm.deleteAll()
             }
         } catch let error as NSError {
@@ -44,11 +55,11 @@ class RealmManager {
     }
 
     //Delete All Objects of a Specific Type
-    func deleteObjectsOf(type: Object) {
+    func deleteObjectsOf(type: Results<TrackingData>) {
         do {
             try realm.write {
-                let allObjectsOfType = realm.objects(Object.self)
-                realm.delete(allObjectsOfType)
+//                let allObjectsOfType = realm.objects(TrackingData.self)
+                realm.delete(type)
             }
         } catch let error as NSError {
             print(error.localizedDescription)
@@ -60,8 +71,8 @@ class RealmManager {
 
         do {
             try realm.write {
-                item.startPlace = str
-                item.endPlace = str
+                item.startLocation = str
+                item.endLocation = str
             }
         } catch let error as NSError {
             print(error.localizedDescription)

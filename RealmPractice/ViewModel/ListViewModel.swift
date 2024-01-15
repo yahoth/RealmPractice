@@ -15,24 +15,28 @@ class ListViewModel {
     let realmManager = RealmManager()
 
     func addChangeListener(_ tableView: UITableView?) {
-        realmManager.notificationToken = trackingDatas.observe { changes in
-            if let tableView {
-                switch changes {
-                case .initial:
-                    tableView.reloadData()
-                case .update(_, let deletions, let insertions, let modifications):
-                    tableView.performBatchUpdates {
-                        tableView.deleteRows(at: deletions.map({ IndexPath(row: $0, section: 0) }),
-                                             with: .automatic)
-                        tableView.insertRows(at: insertions.map({ IndexPath(row: $0, section: 0) }),
-                                             with: .automatic)
-                        tableView.reloadRows(at: modifications.map({ IndexPath(row: $0, section: 0) }),
-                                             with: .automatic)
+            realmManager.notificationToken =
+        trackingDatas.observe { changes in
+                if let tableView {
+                    switch changes {
+                    case .initial:
+                        tableView.reloadData()
+                    case .update(_, let deletions, let insertions, let modifications):
+                        tableView.beginUpdates()
+//                        tableView.performBatchUpdates {
+                            tableView.deleteRows(at: deletions.map({ IndexPath(row: $0, section: 0) }),
+                                                 with: .automatic)
+                            tableView.insertRows(at: insertions.map({ IndexPath(row: $0, section: 0) }),
+                                                 with: .automatic)
+                            tableView.reloadRows(at: modifications.map({ IndexPath(row: $0, section: 0) }),
+                                                 with: .automatic)
+//                        }
+                            tableView.endUpdates()
+                    case .error(let error):
+                        fatalError("\(error)")
                     }
-                case .error(let error):
-                    fatalError("\(error)")
                 }
-            }
+//            }
         }
     }
 
@@ -48,21 +52,34 @@ class ListViewModel {
         CLLocationCoordinate2D(latitude: 37.25378678106246, longitude: 127.26004769612767)
     ]
 
-    var random: CLLocationCoordinate2D {
-        coordinates.randomElement()!
-    }
-
     var trackingDatas: Results<TrackingData> {
         realmManager.read()
+    }
+
+    var speedInfos: List<SpeedInfo> {
+        let infos: [SpeedInfo]  = [
+            SpeedInfo(value: 12, unit: "km", title: "Time"),
+            SpeedInfo(value: 16, unit: "km", title: "Top Speed"),
+            SpeedInfo(value: 345, unit: "km", title: "Average Speed"),
+            SpeedInfo(value: 124, unit: "km", title: "Distance"),
+        ]
+        return infos.toRealmList()
+    }
+
+    var pathInfos: List<PathInfo> {
+        let infos: [PathInfo] = [
+            PathInfo(coordinate: coordinates.randomElement()!, speed: 121),
+            PathInfo(coordinate: coordinates.randomElement()!, speed: 121),
+            PathInfo(coordinate: coordinates.randomElement()!, speed: 121),
+            PathInfo(coordinate: coordinates.randomElement()!, speed: 121)
+        ]
+        return infos.toRealmList()
     }
 
     func addItem() {
         Task {
             let data = TrackingData(
-                startPlace: try await reverseGeocodeLocation(random),
-                endPlace: try await reverseGeocodeLocation(random),
-                startDate: Date(),
-                endDate: Date()
+                speedInfos: speedInfos, pathInfos: pathInfos, startDate: Date(), endDate: Date(), startLocation: try await reverseGeocodeLocation(pathInfos.first!.coordinate), endLocation: try await reverseGeocodeLocation(pathInfos.last!.coordinate)
             )
 
             DispatchQueue.main.async {
@@ -71,8 +88,8 @@ class ListViewModel {
         }
     }
 
-    func deleteAllItems() {
-        realmManager.deleteAll()
+    func deleteObjectsOfTrackingData() {
+        realmManager.deleteObjectsOf(type: trackingDatas)
     }
 
     func reverseGeocodeLocation(_ coordinate: CLLocationCoordinate2D) async throws -> String {

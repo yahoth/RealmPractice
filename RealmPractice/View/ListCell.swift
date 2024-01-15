@@ -56,7 +56,7 @@ class ListCell: UITableViewCell {
 
     func configure(item: TrackingData) {
         createDate.text = item.startDate.formattedString(.full)
-        startPlaceLabel.text = item.startPlace
-        endPlaceLabel.text = item.endPlace
+        startPlaceLabel.text = item.startLocation
+        endPlaceLabel.text = item.endLocation
     }
 }
