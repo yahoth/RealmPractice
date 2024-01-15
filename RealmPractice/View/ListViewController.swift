@@ -72,7 +72,6 @@ extension ListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ListCell", for: indexPath) as? ListCell else { return UITableViewCell() }
         let item = vm.trackingDatas[indexPath.row]
-//        print(vm.realmManager.read())
         cell.configure(item: item)
         cell.selectionStyle = .none
         return cell

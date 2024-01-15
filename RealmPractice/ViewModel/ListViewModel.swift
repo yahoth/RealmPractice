@@ -28,8 +28,6 @@ class ListViewModel {
                                              with: .automatic)
                         tableView.reloadRows(at: modifications.map({ IndexPath(row: $0, section: 0) }),
                                              with: .automatic)
-                    } completion: { finished in
-                        print(finished)
                     }
                 case .error(let error):
                     fatalError("\(error)")

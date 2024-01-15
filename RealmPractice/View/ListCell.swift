@@ -52,9 +52,6 @@ class ListCell: UITableViewCell {
             make.horizontalEdges.equalTo(contentView).inset(20)
             make.bottom.equalTo(contentView).inset(16)
         }
-
-        print("self: \(self)")
-        print("contentView: \(contentView)")
     }
 
     func configure(item: TrackingData) {
