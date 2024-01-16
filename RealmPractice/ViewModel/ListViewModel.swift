@@ -15,28 +15,27 @@ class ListViewModel {
     let realmManager = RealmManager()
 
     func addChangeListener(_ tableView: UITableView?) {
-            realmManager.notificationToken =
+        realmManager.notificationToken =
         trackingDatas.observe { changes in
-                if let tableView {
-                    switch changes {
-                    case .initial:
-                        tableView.reloadData()
-                    case .update(_, let deletions, let insertions, let modifications):
-                        tableView.beginUpdates()
-//                        tableView.performBatchUpdates {
-                            tableView.deleteRows(at: deletions.map({ IndexPath(row: $0, section: 0) }),
-                                                 with: .automatic)
-                            tableView.insertRows(at: insertions.map({ IndexPath(row: $0, section: 0) }),
-                                                 with: .automatic)
-                            tableView.reloadRows(at: modifications.map({ IndexPath(row: $0, section: 0) }),
-                                                 with: .automatic)
-//                        }
-                            tableView.endUpdates()
-                    case .error(let error):
-                        fatalError("\(error)")
+            if let tableView {
+                switch changes {
+                case .initial:
+                    tableView.reloadData()
+                case .update(_, let deletions, let insertions, let modifications):
+                    //                    tableView.beginUpdates()
+                    tableView.performBatchUpdates {
+                        tableView.deleteRows(at: deletions.map({ IndexPath(row: $0, section: 0) }),
+                                             with: .automatic)
+                        tableView.insertRows(at: insertions.map({ IndexPath(row: $0, section: 0) }),
+                                             with: .automatic)
+                        tableView.reloadRows(at: modifications.map({ IndexPath(row: $0, section: 0) }),
+                                             with: .automatic)
                     }
+                    //                    tableView.endUpdates()
+                case .error(let error):
+                    fatalError("\(error)")
                 }
-//            }
+            }
         }
     }
 

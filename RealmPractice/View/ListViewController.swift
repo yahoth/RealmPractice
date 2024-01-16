@@ -45,7 +45,6 @@ class ListViewController: UIViewController {
 
     @objc func deleteAllItems() {
         vm.deleteObjectsOfTrackingData()
-//        tableView.reloadData()
     }
 
     func setupTableView() {
@@ -90,7 +89,6 @@ extension ListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let item = vm.trackingDatas[indexPath.row]
         print("item: \(item)")
-        print("hello")
     }
 }
 
